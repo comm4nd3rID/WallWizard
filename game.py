@@ -1,3 +1,4 @@
+
 import json
 ###import uuid
 import bcrypt
@@ -16,18 +17,18 @@ def signUp():
         users = json.load(file)
 
     for user in users:
-        if user['username'] == userName or user['email'] == email:
+        if users[user]['username'] == userName or users[user]['email'] == email:
             print("username or email already exists")
             return
 
     hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
     ids = []
     for user in users:
-        ids.append(int(user["id"]))
+        ids.append(int(users[user]["id"]))
     userId = genId(ids)
     new_user = {"id": userId, "username": userName, "password": hashed_password.decode('utf-8'), "email": email}
 
-    users.append(new_user)
+    users[userId] = new_user
 
     with open('users.json', 'w') as file:
         json.dump(users, file)
@@ -40,3 +41,6 @@ def genId(ids):
         if i == resId :
             resId+=1
     return resId
+
+
+signUp()

@@ -5,6 +5,7 @@ import bcrypt
 import re
 
 def signUp():
+    global userName
     userName = input("Enter username: ")
     password = input("Enter password (more than 8 characters): ")
     email = input("Enter email: ")
@@ -55,4 +56,37 @@ def login():
             return user
 
     print("Invalid username or password")
+    return None
+
+print("    corridor    ")
+print("    Sign Up : 1 ")
+print("    Login : 2")
+def menu_1():
+    inp = input("enter the code:")
+    if inp == "1":
+        signUp()
+        menu_1()
+    elif inp =="2":
+        login()
+    else :  
+        print("enter valid number")
+        menu_1()
+    return None
+def menu_2():
+    print(f"you loged in succesfully! {userName}")
+    print("    New game: 1")
+    print("    Load game: 2")
+    print("    Best players: 3")
+    inp_2 = input("enter the code:")
+    if inp_2 == "1":
+        None
+        # start game
+    elif inp_2 == "2":
+        None
+        # Load previous games
+    elif inp_2 == "3":
+        None
+        # show the list of best players
+    else :
+        menu_2()
     return None

@@ -21,14 +21,14 @@ def signUp():
             print("username or email already exists")
             return
 
-    hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+    hashedPassword = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
     ids = []
     for user in users:
         ids.append(int(users[user]["id"]))
     userId = genId(ids)
-    new_user = {"id": userId, "username": userName, "password": hashed_password.decode('utf-8'), "email": email}
+    newUser = {"id": userId, "username": userName, "password": hashedPassword.decode('utf-8'), "email": email}
 
-    users[userId] = new_user
+    users[userId] = newUser
 
     with open('users.json', 'w') as file:
         json.dump(users, file)
@@ -42,5 +42,17 @@ def genId(ids):
             resId+=1
     return resId
 
+def login():
+    userName = input("Enter username: ")
+    password = input("Enter password: ")
 
-signUp()
+    with open('users.json', 'r') as file:
+        users = json.load(file)
+    
+    for user in users:
+        if users[user]['username'] == userName and bcrypt.checkpw(password.encode('utf-8'), users[user]['password'].encode('utf-8')):
+            print("Login successful")
+            return user
+
+    print("Invalid username or password")
+    return None

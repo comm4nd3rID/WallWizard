@@ -4,6 +4,22 @@ import bcrypt
 import re
 users = {}
 userId = 0
+()
+def wall_check(p,wall,n):
+    if p[1] == n:
+        return True
+    if (p[0],p[1]-1) not in wall[V] and (p[0],p[1]) not in wall[V] and p[0] != 8:
+        if wall_check((p[0]+1,p[1])):
+            return True
+    if (p[0]-1,p[1]-1) not in wall[V] and (p[0]-1,p[1]) not in wall[V] and p[0] != 0:
+        if wall_check((p[0]+1,p[1])):
+            return True
+    if (p[0],p[1]) not in wall[H] and (p[0]-1,p[1]) not in wall[H] and p[1] != 8:
+        if wall_check((p[0]+1,p[1])):
+            return True
+    if (p[0],p[1]-1) not in wall[H] and (p[0]-1,p[1]-1) not in wall[H] and p[0] != 0:
+        if wall_check((p[0]+1,p[1])):
+            return True
 def signUp():
     userName = input("Enter username: ")
     password = input("Enter password (more than 8 characters): ")

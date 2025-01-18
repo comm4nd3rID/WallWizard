@@ -90,3 +90,54 @@ def menu_2():
     else :
         menu_2()
     return None
+
+def stringReplace(string, s, e, t):
+    return string[0:s] + t + string[e:len(string)]
+
+class Quoridor:
+    def __init__(self):
+        self.board = '''**  **  **  **  **  **  **  **  **
+                                  
+**  **  **  **  **  **  **  **  **
+                                  
+**  **  **  **  **  **  **  **  **
+                                  
+**  **  **  **  **  **  **  **  **
+                                  
+**  **  **  **  **  **  **  **  **
+                                  
+**  **  **  **  **  **  **  **  **
+                                  
+**  **  **  **  **  **  **  **  **
+                                  
+**  **  **  **  **  **  **  **  **
+                                  
+**  **  **  **  **  **  **  **  **'''
+        self.walls = {'H': [], 'V': []}
+        self.players = {'P1': (0, 4), 'P2': (8, 4)}
+        self.turn = 'P1'
+        self.remaining_walls = {'P1': 10, 'P2': 10}
+
+    def display_board(self):
+        p1x,p1y = self.players['P1']
+        p2x,p2y = self.players['P2']
+        self.board = stringReplace(self.board,(p1y*70) + (p1x*4),(p1y*70) + (p1x*4) + 2,"P1")
+        self.board = stringReplace(self.board,(p2y*70) + (p2x*4),(p2y*70) + (p2x*4) + 2,"P2")
+        for (i,j) in self.walls['H']:
+            self.board = stringReplace(self.board, (70 * j) + 35 + (i * 4), (70 * j) + 35 + (i * 4) + 6,"------")
+        for (i,j) in self.walls['V']:
+            self.board = stringReplace(self.board, (70 * j) + (i * 4) + 2, (70 * j) + (i * 4) + 2 + 2,"||")
+            self.board = stringReplace(self.board, (70 * j) + 70 + (i * 4) + 2, (70 * j) + 70 + (i * 4) + 2 + 2,"||")
+            self.board = stringReplace(self.board, (70 * j) + 35 + (i * 4) + 2, (70 * j) + 35 + (i * 4) + 2 + 2,"||")
+        print(self.board)
+        print(f"P1 walls: {self.remaining_walls['P1']}, P2 walls: {self.remaining_walls['P2']}")
+
+    def play_game(self):
+        self.move_pawn('P1', 'down')
+        self.place_wall('P1', 'H', (3, 4))
+        self.place_wall('P2', 'V', (6, 6))
+        self.display_board()
+
+    def play_game(self,turn):
+        player = player[turn]
+        self.display_board()

@@ -11,19 +11,20 @@ def wall_check(p,wall,n):
     checked.append(p)
     if p[1] == n:
         return True
-    if (p[0],p[1]-1) not in wall['V'] and (p[0],p[1]) not in wall['V'] and p[0] < 8:
+    if (p[0],p[1]+1) not in wall['V'] and (p[0],p[1]) not in wall['V'] and p[0] < 8:
         if wall_check((p[0]+1,p[1]),wall,8):
             return True
     if (p[0]-1,p[1]-1) not in wall['V'] and (p[0]-1,p[1]) not in wall['V'] and p[0] > 0:
         if wall_check((p[0]-1,p[1]),wall,8):
             return True
-    if (p[0],p[1]) not in wall['H'] and (p[0]-1,p[1]) not in wall['H'] and p[1] < 8:
-        if wall_check((p[0],p[1]+1),wall,8):
-            return True
-    if (p[0],p[1]-1) not in wall['H'] and (p[0]-1,p[1]-1) not in wall['H'] and p[1] > 0:
+    if (p[0],p[1]) not in wall['H'] and (p[0]-1,p[1]) not in wall['H'] and p[1] > 0:
         if wall_check((p[0],p[1]-1),wall,8):
             return True
-    return False           
+    if (p[0],p[1]-1) not in wall['H'] and (p[0]-1,p[1]-1) not in wall['H'] and p[1] < 8:
+        if wall_check((p[0],p[1]+1),wall,8):
+            return True
+    return False        
+       
 def signUp():
     userName = input("Enter username: ")
     password = input("Enter password (more than 8 characters): ")
@@ -69,7 +70,6 @@ def login():
     with open('users.json', 'r') as file:
         global users
         users = json.load(file)
-        print(users)
     
     for user in users:
         if users[user]['username'] == userName and bcrypt.checkpw(password.encode('utf-8'), users[user]['password'].encode('utf-8')):
@@ -78,7 +78,7 @@ def login():
             return user
 
     print("Invalid username or password")
-    return None
+    return False
 
 def stringReplace(string, s, e, t):
     return string[0:s] + t + string[e:len(string)]
@@ -160,13 +160,29 @@ class Quoridor:
         position = (int(i), int(j))
         
         if self.remaining_walls[player] > 0:
-            
+            walls = self.walls
+            walls['H' if orientation=="horizontal" else 'V'].append(position)
+            if not (wall_check(self.players['P1'],walls,8) and wall_check(self.players['P2'],walls,0)):
+               print("Cant put that there")
+               self.place_wall(player)
+               return
             self.walls[orientation].append(position)
             self.remaining_walls[player] -= 1
             
             
     def play_game(self,turn):
-        player = player[turn]
+        print(users[self.p1ID]['username'] + " as P1 VS " + users[self.p2ID]['username'] + " as P2!")
+        print(turn + "s Turn")
+        (i1, j1) = self.players['P1']
+        (i2, j2) = self.players['P2']
+        if(j1 == 8):
+                print(users[self.p1ID]['username'] + "Won!")
+                return self
+        else:
+            if(j2 == 0):
+                print(users[self.p2ID]['username'] + " Won!")
+                return self
+        
         self.display_board()
         inp = input("Choose an option (placewall, moveplayer): ")
         if(inp != "placewall" and inp != "moveplayer"):
@@ -176,11 +192,12 @@ class Quoridor:
             self.move_pawn(turn,input("Enter direction (up, down, left, right): "))
         else:
             if not (self.remaining_walls[turn] > 0):
-                print(f"No remaining walls for {player}")
+                print(f"No remaining walls for {turn}")
                 self.play_game(turn)
                 return
             else:
                 self.place_wall(turn)
+        self.play_game("P1" if(turn == "P2") else "P2")
 
 
 def menu_2():
@@ -190,7 +207,13 @@ def menu_2():
     print("    Best players: 3")
     inp_2 = input("enter the code:")
     if inp_2 == "1":
-        None
+        l = login()
+        if(not l):
+            menu_2()
+            return
+        else:
+            game = Quoridor(userId,l)
+            game.play_game('P1')
         # start game
     elif inp_2 == "2":
         None
@@ -200,6 +223,7 @@ def menu_2():
         # show the list of best players
     else :
         menu_2()
+        return
     return None
 
 def menu_1():
@@ -210,16 +234,21 @@ def menu_1():
     if inp == "1":
         signUp()
         menu_1()
+        return
     elif inp =="2":
         user_id = login()
-        if(user_id == None):
+        if(user_id == False):
             menu_1()
+            return
         else :
             global userId
             userId = user_id
             print(f"you loged in succesfully! {users[userId]['username']}")
             menu_2()
+            return
     else :  
         print("enter valid number")
         menu_1()
-    return None
+        return
+
+menu_1()

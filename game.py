@@ -84,7 +84,9 @@ def stringReplace(string, s, e, t):
     return string[0:s] + t + string[e:len(string)]
 
 class Quoridor:
-    def __init__(self):
+    def __init__(self,p1,p2,walls = {'H': [], 'V': []},players = {'P1': (4, 0), 'P2': (4, 8)},turn = 'P1',rWalls = {'P1': 10, 'P2': 10}):
+        self.p1ID=p1
+        self.p2ID=p2
         self.board = '''**  **  **  **  **  **  **  **  **
                                   
 **  **  **  **  **  **  **  **  **
@@ -102,10 +104,10 @@ class Quoridor:
 **  **  **  **  **  **  **  **  **
                                   
 **  **  **  **  **  **  **  **  **'''
-        self.walls = {'H': [], 'V': []}
-        self.players = {'P1': (0, 4), 'P2': (8, 4)}
-        self.turn = 'P1'
-        self.remaining_walls = {'P1': 10, 'P2': 10}
+        self.walls = walls
+        self.players = players
+        self.turn = turn
+        self.remaining_walls = rWalls
     
     def display_board(self):
         p1x,p1y = self.players['P1']
@@ -171,6 +173,7 @@ class Quoridor:
             
             
     def play_game(self,turn):
+        self.turn=turn
         print(users[self.p1ID]['username'] + " as P1 VS " + users[self.p2ID]['username'] + " as P2!")
         print(turn + "s Turn")
         (i1, j1) = self.players['P1']

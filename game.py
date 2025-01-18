@@ -4,22 +4,26 @@ import bcrypt
 import re
 users = {}
 userId = 0
-()
+checked = []
 def wall_check(p,wall,n):
+    if p in checked:
+        return False
+    checked.append(p)
     if p[1] == n:
         return True
-    if (p[0],p[1]-1) not in wall[V] and (p[0],p[1]) not in wall[V] and p[0] != 8:
-        if wall_check((p[0]+1,p[1])):
+    if (p[0],p[1]-1) not in wall['V'] and (p[0],p[1]) not in wall['V'] and p[0] < 8:
+        if wall_check((p[0]+1,p[1]),wall,8):
             return True
-    if (p[0]-1,p[1]-1) not in wall[V] and (p[0]-1,p[1]) not in wall[V] and p[0] != 0:
-        if wall_check((p[0]+1,p[1])):
+    if (p[0]-1,p[1]-1) not in wall['V'] and (p[0]-1,p[1]) not in wall['V'] and p[0] > 0:
+        if wall_check((p[0]-1,p[1]),wall,8):
             return True
-    if (p[0],p[1]) not in wall[H] and (p[0]-1,p[1]) not in wall[H] and p[1] != 8:
-        if wall_check((p[0]+1,p[1])):
+    if (p[0],p[1]) not in wall['H'] and (p[0]-1,p[1]) not in wall['H'] and p[1] < 8:
+        if wall_check((p[0],p[1]+1),wall,8):
             return True
-    if (p[0],p[1]-1) not in wall[H] and (p[0]-1,p[1]-1) not in wall[H] and p[0] != 0:
-        if wall_check((p[0]+1,p[1])):
+    if (p[0],p[1]-1) not in wall['H'] and (p[0]-1,p[1]-1) not in wall['H'] and p[1] > 0:
+        if wall_check((p[0],p[1]-1),wall,8):
             return True
+    return False           
 def signUp():
     userName = input("Enter username: ")
     password = input("Enter password (more than 8 characters): ")

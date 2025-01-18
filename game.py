@@ -86,30 +86,81 @@ class Quoridor:
         self.players = {'P1': (0, 4), 'P2': (8, 4)}
         self.turn = 'P1'
         self.remaining_walls = {'P1': 10, 'P2': 10}
-
+    
     def display_board(self):
         p1x,p1y = self.players['P1']
         p2x,p2y = self.players['P2']
-        self.board = stringReplace(self.board,(p1y*70) + (p1x*4),(p1y*70) + (p1x*4) + 2,"P1")
-        self.board = stringReplace(self.board,(p2y*70) + (p2x*4),(p2y*70) + (p2x*4) + 2,"P2")
+        cboard = self.board
+        cboard = stringReplace(cboard,(p1y*70) + (p1x*4),(p1y*70) + (p1x*4) + 2,"P1")
+        cboard = stringReplace(cboard,(p2y*70) + (p2x*4),(p2y*70) + (p2x*4) + 2,"P2")
         for (i,j) in self.walls['H']:
-            self.board = stringReplace(self.board, (70 * j) + 35 + (i * 4), (70 * j) + 35 + (i * 4) + 6,"------")
+            cboard = stringReplace(cboard, (70 * j) + 35 + (i * 4), (70 * j) + 35 + (i * 4) + 6,"------")
         for (i,j) in self.walls['V']:
-            self.board = stringReplace(self.board, (70 * j) + (i * 4) + 2, (70 * j) + (i * 4) + 2 + 2,"||")
-            self.board = stringReplace(self.board, (70 * j) + 70 + (i * 4) + 2, (70 * j) + 70 + (i * 4) + 2 + 2,"||")
-            self.board = stringReplace(self.board, (70 * j) + 35 + (i * 4) + 2, (70 * j) + 35 + (i * 4) + 2 + 2,"||")
-        print(self.board)
+            cboard = stringReplace(cboard, (70 * j) + (i * 4) + 2, (70 * j) + (i * 4) + 2 + 2,"||")
+            cboard = stringReplace(cboard, (70 * j) + 70 + (i * 4) + 2, (70 * j) + 70 + (i * 4) + 2 + 2,"||")
+            cboard = stringReplace(cboard, (70 * j) + 35 + (i * 4) + 2, (70 * j) + 35 + (i * 4) + 2 + 2,"||")
+        print(cboard)
         print(f"P1 walls: {self.remaining_walls['P1']}, P2 walls: {self.remaining_walls['P2']}")
 
-    def play_game(self):
-        self.move_pawn('P1', 'down')
-        self.place_wall('P1', 'H', (3, 4))
-        self.place_wall('P2', 'V', (6, 6))
-        self.display_board()
+    def move_pawn(self, player, direction):
+        x, y = self.players[player]
+        if direction == 'left' and x > 0:
+            self.players[player] = (x-1, y)
+        elif direction == 'right' and x < 8:
+            self.players[player] = (x+1, y)
+        elif direction == 'down' and y > 0:
+            self.players[player] = (x, y+1)
+        elif direction == 'up' and y < 8:
+            self.players[player] = (x, y-1)
+        else:
+            print("Invalid move")
+            self.move_pawn(player,input("Enter direction (up, down, left, right): "))
+        x, y = self.players[player]
 
+    def place_wall(self, player):
+        position = (0,0)
+        orientation = input("Enter orientation (horizontal ,vertical) :")
+        if(orientation != "horizontal" and orientation != "vertical"):
+            print("Invalid orientation")
+            self.place_wall(player)
+            return
+        
+        i = input("Enter i (1 to 8):")
+        if(not int(i)):
+            print("Invalid i")
+            self.place_wall(player)
+            return
+        
+        j = input("Enter j (1 to 8):")
+        if(not int(j)):
+            print("Invalid j")
+            self.place_wall(player)
+            return
+        
+        position = (int(i), int(j))
+        
+        if self.remaining_walls[player] > 0:
+            
+            self.walls[orientation].append(position)
+            self.remaining_walls[player] -= 1
+            
+            
     def play_game(self,turn):
         player = player[turn]
         self.display_board()
+        inp = input("Choose an option (placewall, moveplayer): ")
+        if(inp != "placewall" and inp != "moveplayer"):
+            self.play_game(turn)
+            return
+        elif(inp == "moveplayer"):
+            self.move_pawn(turn,input("Enter direction (up, down, left, right): "))
+        else:
+            if not (self.remaining_walls[turn] > 0):
+                print(f"No remaining walls for {player}")
+                self.play_game(turn)
+                return
+            else:
+                self.place_wall(turn)
 
 
 def menu_2():
